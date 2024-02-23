@@ -8,9 +8,6 @@ from ...utils import loss_utils
 from ...utils.spconv_utils import replace_feature, spconv
 import copy
 from easydict import EasyDict
-# from visdom import Visdom
-# viz = Visdom()
-
 
 
 class SeparateHead(nn.Module):
@@ -57,15 +54,10 @@ class VoxelNeXtHead(nn.Module):
         self.model_cfg = model_cfg
         self.num_class = num_class
         self.grid_size = grid_size
-        try:
-            self.point_cloud_range = torch.Tensor(point_cloud_range).cuda()
-            self.voxel_size = torch.Tensor(voxel_size).cuda()
-            
-        except:
-            self.point_cloud_range = torch.Tensor(self.model_cfg.POINT_CLOUD_RANGE).cuda()
-            self.voxel_size = torch.Tensor(self.model_cfg.VOXEL_SIZE).cuda()
-
+        self.point_cloud_range = torch.Tensor(point_cloud_range).cuda()
+        self.voxel_size = torch.Tensor(voxel_size).cuda()
         self.feature_map_stride = self.model_cfg.TARGET_ASSIGNER_CONFIG.get('FEATURE_MAP_STRIDE', None)
+
         self.class_names = class_names
         self.class_names_each_head = []
         self.class_id_mapping_each_head = []
@@ -197,11 +189,11 @@ class VoxelNeXtHead(nn.Module):
         Returns:
 
         """
-        heatmap = gt_boxes.new_zeros(num_classes, num_voxels) # [3, 11806]
+        heatmap = gt_boxes.new_zeros(num_classes, num_voxels)
 
-        ret_boxes = gt_boxes.new_zeros((num_max_objs, gt_boxes.shape[-1] - 1 + 1)) # [500, 8]
-        inds = gt_boxes.new_zeros(num_max_objs).long() # [500]
-        mask = gt_boxes.new_zeros(num_max_objs).long() # [500]
+        ret_boxes = gt_boxes.new_zeros((num_max_objs, gt_boxes.shape[-1] - 1 + 1))
+        inds = gt_boxes.new_zeros(num_max_objs).long()
+        mask = gt_boxes.new_zeros(num_max_objs).long()
 
         x, y, z = gt_boxes[:, 0], gt_boxes[:, 1], gt_boxes[:, 2]
         coord_x = (x - self.point_cloud_range[0]) / self.voxel_size[0] / feature_map_stride
@@ -264,12 +256,12 @@ class VoxelNeXtHead(nn.Module):
         spatial_indices = self.forward_ret_dict['voxel_indices'][:, 1:]
 
         for idx, pred_dict in enumerate(pred_dicts):
-            pred_dict['hm'] = self.sigmoid(pred_dict['hm']) # [58875, 3]
+            pred_dict['hm'] = self.sigmoid(pred_dict['hm'])
             hm_loss = self.hm_loss_func(pred_dict['hm'], target_dicts['heatmaps'][idx])
             hm_loss *= self.model_cfg.LOSS_CONFIG.LOSS_WEIGHTS['cls_weight']
 
-            target_boxes = target_dicts['target_boxes'][idx] # [8, 500, 8]
-            pred_boxes = torch.cat([pred_dict[head_name] for head_name in self.separate_head_cfg.HEAD_ORDER], dim=1) # [58875, 8]
+            target_boxes = target_dicts['target_boxes'][idx]
+            pred_boxes = torch.cat([pred_dict[head_name] for head_name in self.separate_head_cfg.HEAD_ORDER], dim=1)
 
             reg_loss = self.reg_loss_func(
                 pred_boxes, target_dicts['masks'][idx], target_dicts['inds'][idx], target_boxes, batch_index
@@ -543,17 +535,6 @@ class VoxelNeXtHead(nn.Module):
                 data_dict['gt_boxes'], num_voxels, spatial_indices, spatial_shape
             )
             self.forward_ret_dict['target_dicts'] = target_dict
-
-        #############################
-        self.pts_feats = x
-        self.heatmap = pred_dicts[0]['hm'].sigmoid()
-        # self.sparse_feature = x.replace_feature(target_dict['heatmaps'][0])
-        # self.sparse_feature = self.sparse_feature.dense()
-        # viz.image(self.sparse_feature[0,...])
-
-        # self.pred_sparse_feature = x.replace_feature(pred_dicts[0]['hm'])
-        # viz.image(self.pred_sparse_feature.dense()[0,...])
-        #############################
 
         self.forward_ret_dict['pred_dicts'] = pred_dicts
         self.forward_ret_dict['voxel_indices'] = voxel_indices

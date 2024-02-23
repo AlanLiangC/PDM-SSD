@@ -20,7 +20,7 @@ from train_utils.train_utils import train_model
 
 def parse_config():
     parser = argparse.ArgumentParser(description='arg parser')
-    parser.add_argument('--cfg_file', type=str, default='./cfgs/kitti_models/gaus_bridge_vn.yaml', help='specify the config for training')
+    parser.add_argument('--cfg_file', type=str, default=None, help='specify the config for training')
 
     parser.add_argument('--batch_size', type=int, default=None, required=False, help='batch size for training')
     parser.add_argument('--epochs', type=int, default=None, required=False, help='number of epochs to train for')
@@ -130,11 +130,6 @@ def main():
     if args.sync_bn:
         model = torch.nn.SyncBatchNorm.convert_sync_batchnorm(model)
     model.cuda()
-
-    #######################
-    n_parameters = sum(p.numel() for p in model.parameters() if p.requires_grad)
-    logger.info(f'Total number of params: {n_parameters}')
-    #######################
 
     optimizer = build_optimizer(model, cfg.OPTIMIZATION)
 

@@ -7,10 +7,6 @@ from .point_intra_part_head import PointIntraPartOffsetHead
 from .center_head import CenterHead
 from .voxelnext_head import VoxelNeXtHead
 from .transfusion_head import TransFusionHead
-from .IASSD_head import IASSD_Head
-from .IASSD_head_plus import IASSD_HeadPlus
-from .voxelnext_head_plus import VoxelNeXtHeadPlus
-from .voxelnext_head_plus_plus import VoxelNeXtHeadPlusPLus
 
 __all__ = {
     'AnchorHeadTemplate': AnchorHeadTemplate,
@@ -22,8 +18,4 @@ __all__ = {
     'CenterHead': CenterHead,
     'VoxelNeXtHead': VoxelNeXtHead,
     'TransFusionHead': TransFusionHead,
-    'IASSD_Head': IASSD_Head,
-    'IASSD_HeadPlus': IASSD_HeadPlus,
-    'VoxelNeXtHeadPlus': VoxelNeXtHeadPlus,
-    'VoxelNeXtHeadPlusPLus': VoxelNeXtHeadPlusPLus
 }

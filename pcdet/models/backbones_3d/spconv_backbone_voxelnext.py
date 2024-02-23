@@ -176,20 +176,20 @@ class VoxelResBackBone8xVoxelNeXt(nn.Module):
         """
         voxel_features, voxel_coords = batch_dict['voxel_features'], batch_dict['voxel_coords']
         batch_size = batch_dict['batch_size']
-        input_sp_tensor = spconv.SparseConvTensor( # [33, 800, 704]
+        input_sp_tensor = spconv.SparseConvTensor(
             features=voxel_features,
             indices=voxel_coords.int(),
             spatial_shape=self.sparse_shape,
             batch_size=batch_size
         )
-        x = self.conv_input(input_sp_tensor) # [33, 800, 704]
+        x = self.conv_input(input_sp_tensor)
 
-        x_conv1 = self.conv1(x) # [33, 800, 704]
-        x_conv2 = self.conv2(x_conv1) # [17, 400, 352]
-        x_conv3 = self.conv3(x_conv2) # [9, 200, 176]
-        x_conv4 = self.conv4(x_conv3) # [5, 100, 88]
-        x_conv5 = self.conv5(x_conv4) # [3, 50, 44]
-        x_conv6 = self.conv6(x_conv5) # [2, 25, 22]
+        x_conv1 = self.conv1(x)
+        x_conv2 = self.conv2(x_conv1)
+        x_conv3 = self.conv3(x_conv2)
+        x_conv4 = self.conv4(x_conv3)
+        x_conv5 = self.conv5(x_conv4)
+        x_conv6 = self.conv6(x_conv5)
 
         x_conv5.indices[:, 1:] *= 2
         x_conv6.indices[:, 1:] *= 4
@@ -198,7 +198,7 @@ class VoxelResBackBone8xVoxelNeXt(nn.Module):
 
         out = self.bev_out(x_conv4)
 
-        out = self.conv_out(out) # [100, 88]
+        out = self.conv_out(out)
         out = self.shared_conv(out)
 
         batch_dict.update({

@@ -15,8 +15,6 @@ from .pillarnet import PillarNet
 from .voxelnext import VoxelNeXt
 from .transfusion import TransFusion
 from .bevfusion import BevFusion
-from .gausbridge import GAUSBridge
-from .IASSD import IASSD
 
 __all__ = {
     'Detector3DTemplate': Detector3DTemplate,
@@ -37,9 +35,8 @@ __all__ = {
     'VoxelNeXt': VoxelNeXt,
     'TransFusion': TransFusion,
     'BevFusion': BevFusion,
-    'GAUSBridge': GAUSBridge,
-    'IASSD': IASSD
 }
+
 
 def build_detector(model_cfg, num_class, dataset):
     model = __all__[model_cfg.NAME](
