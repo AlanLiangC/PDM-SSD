@@ -9,7 +9,6 @@ we present a novel Point Dilation Mechanism for single-stage 3D detection (PDM-S
 <p align="center">
   <img src="docs/workflow.svg" width="98%">
 </p>
-
 **Abstract.** One of the important reasons why grid/voxel-based 3D object detectors can achieve robust results for sparse and incomplete targets in LiDAR scenes is that the repeated padding, convolution, and pooling layers in the feature learning process enlarge the model's receptive field, enabling features even in space not covered by point clouds. However, they require time- and memory-consuming 3D backbones. Point-based detectors are more suitable for practical application, but current detectors can only learn from the provided points, with limited receptive fields and insufficient global learning capabilities for such targets. In this paper, we present a novel Point Dilation Mechanism for single-stage 3D detection (PDM-SSD) that takes advantage of these two representations. Specifically, we first use a PointNet-style 3D backbone for efficient feature encoding. Then, a neck with Point Dilation Mechanism (PDM) is used to expand the feature space, which involves two key steps: point dilation and feature filling. The former expands points to a certain size grid centered around the sampled points in Euclidean space. The latter fills the unoccupied grid with feature for backpropagation using spherical harmonic coefficients and Gaussian density function in terms of direction and scale. Next, we associate multiple dilation centers and fuse coefficients to obtain sparse grid features through height compression. Finally, we design a hybrid detection head for joint learning, where on one hand, the scene heatmap is predicted to complement the voting point set for improved detection accuracy, and on the other hand, the target probability of detected boxes are calibrated through feature fusion. On the challenging KITTI dataset, PDM-SSD achieves state-of-the-art results for multi-class detection among single-modal methods with an inference speed of 68 frames. We also demonstrate the advantages of PDM-SSD in detecting sparse and incomplete objects through numerous object-level instances. Additionally, PDM can serve as an auxiliary network to establish a connection between sampling points and object centers, thereby improving the accuracy of the model without sacrificing inference speed. Our code will be available at [github](https://github.com/AlanLiangC/PDM-SSD.git).
 
 
@@ -102,7 +101,7 @@ pip install pyquaternion
 2. Clone this repository (including submodules).
 
 ```
-git clone git@github.com:MartinHahner/LiDAR_fog_sim.git --recursive
+git clone https://github.com/AlanLiangC/ALViewer.git
 ```
 
 #### Usage
